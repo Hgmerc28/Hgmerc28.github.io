@@ -1,0 +1,7 @@
+# Only the site itself goes public. Everything else in this folder stays private.
+/*
+!/index.html
+!/404.html
+!/.nojekyll
+!/.gitignore
+!/img/

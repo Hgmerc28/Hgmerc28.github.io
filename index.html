@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hugo De Jongh · Electrical Engineering</title>
+<meta name="description" content="Hugo De Jongh, electrical engineering student at UBC Okanagan. Robot power systems, motor drives, test rigs and PCBs.">
+<meta property="og:title" content="Hugo De Jongh · Electrical Engineering">
+<meta property="og:description" content="Robot power systems, motor drives, test rigs and PCBs. Projects and bench results.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f5f4ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0f13" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231f3864'/%3E%3Cpath d='M10 44h10V22h12v22h10V22h12' fill='none' stroke='%23fff' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<script>
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg: #f5f4ef;
+    --bg-grid: rgba(31, 56, 100, 0.055);
+    --card: #ffffff;
+    --ink: #13161b;
+    --body: #333a44;
+    --muted: #626b77;
+    --line: #dcd9ce;
+    --line-strong: #b9b5a7;
+    --accent: #1f3864;
+    --accent-soft: rgba(31, 56, 100, 0.08);
+    --signal: #c2410c;
+    --signal-soft: rgba(194, 65, 12, 0.10);
+    --panel: #10141a;
+    --panel-ink: #e9edf2;
+    --panel-muted: #8d97a5;
+    --panel-line: #262d37;
+    --panel-signal: #ff9d5c;
+    --shadow: 0 1px 2px rgba(19, 22, 27, 0.04), 0 12px 32px -16px rgba(19, 22, 27, 0.18);
+    --sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0f13;
+      --bg-grid: rgba(143, 176, 255, 0.05);
+      --card: #13181f;
+      --ink: #eef1f5;
+      --body: #c4cbd5;
+      --muted: #8d97a5;
+      --line: #232a33;
+      --line-strong: #3a4350;
+      --accent: #9db8ff;
+      --accent-soft: rgba(157, 184, 255, 0.10);
+      --signal: #ff9d5c;
+      --signal-soft: rgba(255, 157, 92, 0.12);
+      --panel: #080a0d;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 40px -20px rgba(0, 0, 0, 0.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0f13;
+    --bg-grid: rgba(143, 176, 255, 0.05);
+    --card: #13181f;
+    --ink: #eef1f5;
+    --body: #c4cbd5;
+    --muted: #8d97a5;
+    --line: #232a33;
+    --line-strong: #3a4350;
+    --accent: #9db8ff;
+    --accent-soft: rgba(157, 184, 255, 0.10);
+    --signal: #ff9d5c;
+    --signal-soft: rgba(255, 157, 92, 0.12);
+    --panel: #080a0d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 40px -20px rgba(0, 0, 0, 0.7);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--body);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  h1, h2, h3 { color: var(--ink); margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+  p { margin: 0; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  .mono { font-family: var(--mono); }
+  :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 4px; }
+
+  /* nav */
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; gap: 16px; }
+  .brand { font-weight: 700; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; white-space: nowrap; }
+  .brand span { color: var(--signal); }
+  .nav nav { display: flex; align-items: center; gap: 4px; }
+  .nav nav a {
+    font-family: var(--mono); font-size: 13px; color: var(--muted); text-decoration: none;
+    padding: 6px 10px; border-radius: 6px;
+  }
+  .nav nav a:hover { color: var(--ink); background: var(--accent-soft); }
+  .theme {
+    margin-left: 6px; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); cursor: pointer; display: grid; place-items: center;
+  }
+  .theme svg { width: 16px; height: 16px; }
+
+  /* hero */
+  .hero {
+    position: relative; overflow: hidden;
+    background-image:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 90% 70% at 30% 0%, transparent 40%, var(--bg) 100%);
+  }
+  .hero .wrap {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 56px;
+    align-items: center; padding-top: 84px; padding-bottom: 88px;
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 22px;
+  }
+  .eyebrow i { font-style: normal; color: var(--line-strong); }
+  h1 { font-size: clamp(44px, 7vw, 84px); line-height: 0.98; letter-spacing: -0.045em; font-weight: 750; }
+  .lede { font-size: clamp(20px, 2.3vw, 25px); line-height: 1.38; color: var(--ink); margin-top: 26px; max-width: 21em; letter-spacing: -0.012em; }
+  .sub { margin-top: 16px; max-width: 34em; color: var(--body); }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 15px; text-decoration: none;
+    padding: 11px 18px; border-radius: 9px; border: 1px solid var(--line-strong);
+    color: var(--ink); background: var(--card);
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: var(--ink); }
+  .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* bench readout */
+  .readout {
+    background: var(--panel); color: var(--panel-ink);
+    border: 1px solid var(--panel-line); border-radius: 16px;
+    box-shadow: var(--shadow); overflow: hidden;
+    font-family: var(--mono);
+  }
+  .readout header {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 13px 18px; border-bottom: 1px solid var(--panel-line);
+    font-size: 12px; color: var(--panel-muted); letter-spacing: 0.02em;
+  }
+  .led { display: inline-flex; align-items: center; gap: 8px; }
+  .led::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--panel-signal);
+    box-shadow: 0 0 0 3px rgba(255, 157, 92, 0.18);
+  }
+  .scope { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--panel-line); }
+  .scope .grid { stroke: var(--panel-line); stroke-width: 1; }
+  .scope .trace { fill: none; stroke: var(--panel-signal); stroke-width: 2; stroke-linejoin: round; }
+  .js .scope .trace { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 2.2s .25s cubic-bezier(.4, 0, .2, 1) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .scope text { font-family: var(--mono); font-size: 10.5px; fill: var(--panel-muted); }
+  .scope .dim { stroke: var(--panel-muted); stroke-width: 1; }
+  .cells { display: grid; grid-template-columns: 1fr 1fr; }
+  .cell { padding: 16px 18px; border-bottom: 1px solid var(--panel-line); }
+  .cell:nth-child(odd) { border-right: 1px solid var(--panel-line); }
+  .cell:nth-last-child(-n+2) { border-bottom: 0; }
+  .cell .k { font-size: 11px; color: var(--panel-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .cell .v { font-size: 28px; line-height: 1.15; margin-top: 6px; color: var(--panel-ink); font-weight: 500; letter-spacing: -0.02em; }
+  .cell .v small { font-size: 13px; color: var(--panel-muted); margin-left: 4px; font-weight: 400; letter-spacing: 0; }
+  .readout footer { padding: 11px 18px; border-top: 1px solid var(--panel-line); font-size: 11.5px; color: var(--panel-muted); }
+  .readout footer a { color: var(--panel-signal); }
+
+  /* sections */
+  section { padding: 88px 0 0; }
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px; }
+  .sec-head h2 { font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -0.03em; }
+  .sec-head .rule { flex: 1; height: 1px; background: var(--line); transform: translateY(-6px); }
+  .sec-head .tag { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+  /* project */
+  .project {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0;
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); overflow: hidden; margin-bottom: 28px;
+  }
+  .project .text { padding: 36px 36px 34px; }
+  .project .fig {
+    background: var(--accent-soft); border-left: 1px solid var(--line);
+    padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 18px;
+  }
+  .project:nth-of-type(even) .text { order: 2; }
+  .project:nth-of-type(even) .fig { order: 1; border-left: 0; border-right: 1px solid var(--line); }
+  .num { font-family: var(--mono); font-size: 12.5px; color: var(--signal); letter-spacing: 0.06em; }
+  .project h3 { font-size: clamp(23px, 2.5vw, 29px); line-height: 1.15; margin-top: 10px; letter-spacing: -0.028em; }
+  .meta { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+  .project p.intro { margin-top: 18px; }
+  .project ul { margin: 16px 0 0; padding: 0; list-style: none; }
+  .project li { position: relative; padding-left: 20px; margin-top: 9px; }
+  .project li::before { content: ""; position: absolute; left: 2px; top: 0.74em; width: 9px; height: 2px; background: var(--signal); }
+  .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 22px; }
+  .specs div { background: var(--card); padding: 11px 14px; }
+  .specs dt { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+  .specs dd { margin: 3px 0 0; font-family: var(--mono); font-size: 15px; color: var(--ink); }
+  .note { margin-top: 16px; font-size: 14.5px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-family: var(--mono); font-size: 12px; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--body); background: var(--card); }
+  figcaption, .cap { font-family: var(--mono); font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+
+  /* diagrams */
+  .dia { width: 100%; height: auto; display: block; overflow: visible; }
+  .dia .bx { fill: var(--card); stroke: var(--line-strong); stroke-width: 1.25; }
+  .dia .bx.hot { stroke: var(--signal); fill: var(--signal-soft); }
+  .dia .bx.key { stroke: var(--accent); stroke-width: 1.6; }
+  .dia .t { font-family: var(--sans); font-size: 15.5px; font-weight: 600; fill: var(--ink); }
+  .dia .s { font-family: var(--mono); font-size: 12px; fill: var(--muted); }
+  .dia .s.hot, .dia .t.hot { fill: var(--signal); }
+  .dia .w { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+  .dia .w.bus { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+  .dia .w.hot { stroke: var(--signal); }
+  .dia .dash { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .dia .fuse { fill: var(--card); stroke: var(--muted); stroke-width: 1.25; }
+  .dia .ah { fill: var(--muted); }
+  .dia .ah.hot { fill: var(--signal); }
+  .dia .lock { fill: var(--signal-soft); }
+  .dia .axis { stroke: var(--line-strong); stroke-width: 6; stroke-linecap: round; }
+  .dia .axis.live { stroke: var(--accent); }
+
+  /* small builds */
+  .grid3 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .mini { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px 26px 24px; }
+  .mini h3 { font-size: 19px; letter-spacing: -0.02em; }
+  .mini p { margin-top: 10px; font-size: 16px; }
+  .mini .chips { margin-top: 16px; }
+
+  /* experience */
+  .xp { border-top: 1px solid var(--line); }
+  .xp .row { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .xp .when { font-family: var(--mono); font-size: 13px; color: var(--muted); padding-top: 4px; }
+  .xp h3 { font-size: 19px; letter-spacing: -0.02em; }
+  .xp .role { color: var(--ink); margin-top: 2px; }
+  .xp p.d { margin-top: 8px; font-size: 16px; max-width: 46em; }
+
+  /* toolbox */
+  .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+  .tools h3 { font-family: var(--mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 12px; }
+
+  /* contact */
+  .contact {
+    margin-top: 88px; background: var(--panel); color: var(--panel-ink);
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .contact .wrap { padding-top: 84px; padding-bottom: 72px; }
+  .contact h2 { color: var(--panel-ink); font-size: clamp(32px, 5vw, 56px); letter-spacing: -0.04em; line-height: 1.05; max-width: 14em; }
+  .contact p { color: var(--panel-muted); margin-top: 18px; max-width: 34em; }
+  .contact .cta { margin-top: 30px; }
+  .contact .btn { background: transparent; color: var(--panel-ink); border-color: #3a4350; }
+  .contact .btn:hover { border-color: var(--panel-ink); }
+  .contact .btn.primary { background: var(--panel-signal); color: #17110c; border-color: var(--panel-signal); }
+  .foot { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--panel-line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--panel-muted); }
+
+  /* reveal */
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  .js .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+    .js .scope .trace { animation: none; stroke-dashoffset: 0; }
+    .btn { transition: none; }
+  }
+
+  @media (max-width: 900px) {
+    body { font-size: 16.5px; }
+    .hero .wrap { grid-template-columns: 1fr; gap: 40px; padding-top: 56px; padding-bottom: 60px; }
+    .project { grid-template-columns: 1fr; }
+    .project .text { padding: 28px 22px 26px; order: 1 !important; }
+    .project .fig { order: 2 !important; border: 0 !important; border-top: 1px solid var(--line) !important; padding: 22px; }
+    .grid3, .tools { grid-template-columns: 1fr; }
+    .xp .row { grid-template-columns: 1fr; gap: 6px; }
+    section { padding-top: 64px; }
+    .nav nav a.hide-s { display: none; }
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 0 16px; }
+    .specs { grid-template-columns: 1fr; }
+    .cell .v { font-size: 23px; }
+    .project .fig { padding: 18px 12px; }
+    .dia .t { font-size: 17px; }
+    .dia .s { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#7b8592"/></marker>
+    <marker id="ahh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#d9642a"/></marker>
+  </defs>
+</svg>
+
+<div class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Hugo De Jongh<span>.</span></a>
+    <nav aria-label="Sections">
+      <a href="#work">work</a>
+      <a href="#builds" class="hide-s">builds</a>
+      <a href="#experience" class="hide-s">experience</a>
+      <a href="#contact">contact</a>
+      <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow"><span>Electrical Engineering</span><i>/</i><span>UBC Okanagan</span><i>/</i><span>Class of 2029</span><i>/</i><span>Kelowna, BC</span></div>
+      <h1>Hugo De&nbsp;Jongh</h1>
+      <p class="lede">I build and bench-test the electronics that make robots move.</p>
+      <p class="sub">Battery packs, motor drives, test rigs and the boards in between. I lead the electrical team on a competition robot at HEAT Robotics, design a low-current measurement board in a research lab, and work as an electrical co-op at Smith + Andersen.</p>
+      <div class="cta">
+        <a class="btn primary" href="#work">See the work
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
+        <a class="btn" href="mailto:hdejon01@student.ubc.ca">Email me</a>
+        <a class="btn" href="https://www.linkedin.com/in/hugo-de-jongh" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+
+    <aside class="readout" aria-label="Bench results from the flywheel motor test">
+      <header><span class="led">BENCH LOG</span><span>flywheel motor test</span></header>
+      <svg class="scope" viewBox="0 0 420 130" role="img" aria-label="PWM signal to the motor controller: one 1337 microsecond pulse every 20 milliseconds">
+        <g class="grid">
+          <path d="M0 26H420M0 52H420M0 78H420M0 104H420M60 0V130M120 0V130M180 0V130M240 0V130M300 0V130M360 0V130"/>
+        </g>
+        <path class="trace" d="M0 92H30V38H39V92H165V38H174V92H300V38H309V92H420"/>
+        <path class="dim" d="M30 26V18M39 26V18"/>
+        <text x="46" y="24">1337 µs pulse</text>
+        <path class="dim" d="M30 108H165M30 104V112M165 104V112"/>
+        <text x="66" y="123">20 ms frame</text>
+        <text x="322" y="24">PWM to ESC</text>
+      </svg>
+      <div class="cells">
+        <div class="cell"><div class="k">Start threshold</div><div class="v">15<small>% throttle</small></div></div>
+        <div class="cell"><div class="k">Pulse width</div><div class="v">1337<small>µs</small></div></div>
+        <div class="cell"><div class="k">Current</div><div class="v">0.5<small>A at 18 V</small></div></div>
+        <div class="cell"><div class="k">Motor temp</div><div class="v">36.7<small>°C after 30 s</small></div></div>
+      </div>
+      <footer>Measured on my test rig. <a href="#p1">How I got them</a></footer>
+    </aside>
+  </div>
+</header>
+
+<main>
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head"><h2>Selected work</h2><div class="rule"></div><div class="tag">05 projects</div></div>
+
+    <!-- 01 -->
+    <article class="project reveal" id="p1">
+      <div class="text">
+        <div class="num">01 / TEST</div>
+        <h3>Flywheel motor test rig</h3>
+        <div class="meta">HEAT Robotics, RoboStrike · Fall 2026</div>
+        <p class="intro">Our launcher throws projectiles with two brushless motors spinning flywheels. Before the team designed anything around those motors, I wanted real numbers: when they start, how much current they pull and how warm they get.</p>
+        <ul>
+          <li>Built an Arduino rig that drives the ESC with PWM and takes throttle commands over serial.</li>
+          <li>Ran it on a current-limited bench supply, with a 25% throttle cap in the code as a safety limit.</li>
+          <li>Handled ESC arming and throttle calibration.</li>
+          <li>Found the start threshold, measured current and temperature, and logged the results for the launcher team.</li>
+        </ul>
+        <dl class="specs">
+          <div><dt>Start threshold</dt><dd>15% · 1337 µs</dd></div>
+          <div><dt>Current</dt><dd>0.5 A at 18 V</dd></div>
+          <div><dt>Motor temp</dt><dd>36.7 °C after 30 s</dd></div>
+          <div><dt>Safety cap</dt><dd>25% throttle</dd></div>
+        </dl>
+        <p class="note">Motors ran unloaded, with nothing on the shaft. Next up is more throttle points on both motors.</p>
+      </div>
+      <figure class="fig" style="margin:0">
+        <svg class="dia" viewBox="0 0 520 370" role="img" aria-label="Test setup: a laptop sends serial commands to an Arduino Uno, which sends PWM to the ESC. A current-limited 18 volt bench supply powers the ESC, which drives the brushless motor. Below, the throttle scale from 1000 to 2000 microseconds with the motor starting at 1337 and the safety cap at 1415.">
+          <rect class="bx" x="10" y="20" width="150" height="74" rx="8"/>
+          <text class="t" x="85" y="46" text-anchor="middle">Bench supply</text>
+          <text class="s" x="85" y="64" text-anchor="middle">18 V</text>
+          <text class="s" x="85" y="80" text-anchor="middle">current-limited</text>
+          <rect class="bx key" x="195" y="20" width="120" height="74" rx="8"/>
+          <text class="t" x="255" y="54.5" text-anchor="middle">ESC</text>
+          <text class="s" x="255" y="72.5" text-anchor="middle">DYS 40 A</text>
+          <rect class="bx" x="350" y="20" width="160" height="74" rx="8"/>
+          <text class="t" x="430" y="54.5" text-anchor="middle">Brushless motor</text>
+          <text class="s" x="430" y="72.5" text-anchor="middle">2306.5 · 1800 KV</text>
+          <path class="w" d="M160 57H193" marker-end="url(#ah)"/>
+          <path class="w" d="M315 49H350M315 57H350M315 65H350"/>
+          <rect class="bx" x="10" y="150" width="150" height="62" rx="8"/>
+          <text class="t" x="85" y="178.5" text-anchor="middle">Laptop</text>
+          <text class="s" x="85" y="196.5" text-anchor="middle">serial commands</text>
+          <rect class="bx" x="195" y="150" width="120" height="62" rx="8"/>
+          <text class="t" x="255" y="178.5" text-anchor="middle">Arduino Uno</text>
+          <text class="s" x="255" y="196.5" text-anchor="middle">test sketch</text>
+          <path class="w" d="M160 181H193" marker-end="url(#ah)"/>
+          <path class="w hot" d="M255 150V96" marker-end="url(#ahh)"/>
+          <text class="s hot" x="265" y="128">PWM</text>
+          <text class="s" x="10" y="252">THROTTLE SCALE (µs)</text>
+          <rect class="lock" x="217.5" y="299" width="292.5" height="26" rx="4"/>
+          <path class="axis" d="M10 312H510"/>
+          <path class="axis live" d="M120 312H217.5"/>
+          <path class="w" d="M10 302V322M120 302V322M217.5 302V322M510 302V322"/>
+          <text class="s" x="10" y="344">1000</text>
+          <text class="s" x="10" y="360">stop</text>
+          <text class="s" x="120" y="344" text-anchor="middle">1220</text>
+          <text class="s" x="120" y="360" text-anchor="middle">0%</text>
+          <text class="s" x="219" y="344">1415</text>
+          <text class="s" x="219" y="360">25% cap</text>
+          <text class="s" x="510" y="344" text-anchor="end">2000</text>
+          <text class="s" x="510" y="360" text-anchor="end">full</text>
+          <circle cx="178.5" cy="312" r="6.5" fill="var(--signal)"/>
+          <path class="w hot" d="M178.5 305V290"/>
+          <text class="s hot" x="178.5" y="283" text-anchor="middle">1337 · motor starts</text>
+          <text class="s hot" x="372" y="291" text-anchor="middle">locked out by the cap</text>
+        </svg>
+        <figcaption>Test setup, and where the motor starts on the throttle scale.</figcaption>
+      </figure>
+    </article>
+
+    <!-- 02 -->
+    <article class="project reveal" id="p2">
+      <div class="text">
+        <div class="num">02 / SYSTEM DESIGN</div>
+        <h3>RoboStrike electrical system</h3>
+        <div class="meta">HEAT Robotics · Lead Electrical Director · 2026 to now</div>
+        <p class="intro">RoboStrike is HEAT Robotics' RoboMaster competition robot. I lead the electrical side: four subteams and about seven people covering drive, launcher, power distribution, and comms and sensors.</p>
+        <ul>
+          <li>Designed the prototype electrical architecture: 6S power distribution with a 60 A main fuse, a fuse on every branch and a protected feed for the logic.</li>
+          <li>Planned the STM32F407 interfaces: SBUS, servo bus, I²C power monitoring and CAN.</li>
+          <li>Set one rule for the whole team. Every board and harness passes a current-limited bench test before it touches the power bus.</li>
+          <li>Write the onboarding and training material so new members can wire and test safely.</li>
+        </ul>
+      </div>
+      <figure class="fig" style="margin:0">
+        <svg class="dia" viewBox="0 0 520 330" role="img" aria-label="Power architecture: a 6S battery feeds a 60 amp main fuse and a distribution bus. Four fused branches go to the drive motors, the launcher, the servo rail, and a protected logic feed for the STM32F407.">
+          <rect class="bx" x="8" y="140" width="84" height="62" rx="8"/>
+          <text class="t" x="50" y="168.5" text-anchor="middle">Battery</text>
+          <text class="s" x="50" y="186.5" text-anchor="middle">6S</text>
+          <path class="w" d="M92 171H112"/>
+          <rect class="bx hot" x="112" y="140" width="100" height="62" rx="8"/>
+          <text class="t" x="162" y="168.5" text-anchor="middle">Main fuse</text>
+          <text class="s hot" x="162" y="186.5" text-anchor="middle">60 A</text>
+          <path class="w" d="M212 171H244"/>
+          <path class="w bus" d="M244 30V308"/>
+          <text class="s" x="232" y="24" text-anchor="end">fuse on every branch</text>
+          <path class="w" d="M244 46H262"/>
+          <path class="w" d="M298 46H314" marker-end="url(#ah)"/>
+          <rect class="fuse" x="262" y="38" width="36" height="16" rx="8"/>
+          <rect class="bx" x="316" y="19" width="196" height="54" rx="8"/>
+          <text class="t" x="414" y="43.5" text-anchor="middle">Drive</text>
+          <text class="s" x="414" y="61.5" text-anchor="middle">motor ESCs</text>
+          <path class="w" d="M244 128H262"/>
+          <path class="w" d="M298 128H314" marker-end="url(#ah)"/>
+          <rect class="fuse" x="262" y="120" width="36" height="16" rx="8"/>
+          <rect class="bx" x="316" y="101" width="196" height="54" rx="8"/>
+          <text class="t" x="414" y="125.5" text-anchor="middle">Launcher</text>
+          <text class="s" x="414" y="143.5" text-anchor="middle">flywheel ESCs</text>
+          <path class="w" d="M244 210H262"/>
+          <path class="w" d="M298 210H314" marker-end="url(#ah)"/>
+          <rect class="fuse" x="262" y="202" width="36" height="16" rx="8"/>
+          <rect class="bx" x="316" y="183" width="196" height="54" rx="8"/>
+          <text class="t" x="414" y="207.5" text-anchor="middle">Servo rail</text>
+          <text class="s" x="414" y="225.5" text-anchor="middle">regulated</text>
+          <path class="w" d="M244 292H262"/>
+          <path class="w" d="M298 292H314" marker-end="url(#ah)"/>
+          <rect class="fuse" x="262" y="284" width="36" height="16" rx="8"/>
+          <rect class="bx key" x="316" y="265" width="196" height="54" rx="8"/>
+          <text class="t" x="414" y="289.5" text-anchor="middle">STM32F407 logic</text>
+          <text class="s" x="414" y="307.5" text-anchor="middle">protected feed</text>
+        </svg>
+        <div>
+          <div class="cap" style="margin-bottom:8px">STM32F407 INTERFACES</div>
+          <div class="chips"><span class="chip">SBUS</span><span class="chip">Servo bus</span><span class="chip">I²C power monitoring</span><span class="chip">CAN</span></div>
+        </div>
+      </figure>
+    </article>
+
+    <!-- 03 -->
+    <article class="project reveal" id="p3">
+      <div class="text">
+        <div class="num">03 / POWER AND DRIVES</div>
+        <h3>Power and motor drives for a wildfire robot</h3>
+        <div class="meta">HEAT Robotics, EMBR · Interim Electrical Lead · 2025 to 2026</div>
+        <p class="intro">EMBR is a tracked robot for the cleanup stage after a wildfire. It drives over burned ground and checks for hotspots that are still holding heat. I worked on the battery, the power harness and the motor drives. The sensing and autonomy are the software team's work.</p>
+        <ul>
+          <li>Built the 10S4P Li-ion pack from 18650 cells, with a BMS and a precharge circuit.</li>
+          <li>Built the harness that steps 42 V down to regulated 12 V and 5 V rails.</li>
+          <li>Brought up the maxon ESCON2 drives for the drivetrain and the ODrive S1 controllers for the arm: PWM command mapping, current limits and closed-loop control with AS5047P encoders.</li>
+        </ul>
+        <p class="note">We presented EMBR at the MassRobotics Form &amp; Function Challenge in Boston in May 2026.</p>
+      </div>
+      <figure class="fig" style="margin:0">
+        <svg class="dia" viewBox="0 0 520 290" role="img" aria-label="EMBR power path: a 10S4P lithium-ion pack goes through a BMS and precharge circuit to a 42 volt bus. The bus feeds the motor drives directly and is stepped down to regulated 12 volt and 5 volt rails.">
+          <rect class="bx key" x="8" y="112" width="140" height="76" rx="8"/>
+          <text class="t" x="78" y="139" text-anchor="middle">Li-ion pack</text>
+          <text class="s" x="78" y="157" text-anchor="middle">10S4P · 18650</text>
+          <text class="s" x="78" y="173" text-anchor="middle">42 V full</text>
+          <path class="w" d="M148 150H164" marker-end="url(#ah)"/>
+          <rect class="bx" x="166" y="122" width="60" height="56" rx="8"/>
+          <text class="t" x="196" y="156" text-anchor="middle">BMS</text>
+          <path class="w" d="M226 150H242" marker-end="url(#ah)"/>
+          <rect class="bx" x="244" y="122" width="96" height="56" rx="8"/>
+          <text class="t" x="292" y="156" text-anchor="middle">Precharge</text>
+          <path class="w" d="M340 150H366"/>
+          <path class="w bus" d="M366 38V264"/>
+          <text class="s" x="356" y="34" text-anchor="end">42 V bus</text>
+          <path class="w" d="M366 64H386" marker-end="url(#ah)"/>
+          <rect class="bx" x="388" y="36" width="124" height="56" rx="8"/>
+          <text class="t" x="450" y="61.5" text-anchor="middle">Motor drives</text>
+          <text class="s" x="450" y="79.5" text-anchor="middle">ESCON2, ODrive</text>
+          <path class="w" d="M366 150H386" marker-end="url(#ah)"/>
+          <rect class="bx" x="388" y="122" width="124" height="56" rx="8"/>
+          <text class="t" x="450" y="147.5" text-anchor="middle">12 V rail</text>
+          <text class="s" x="450" y="165.5" text-anchor="middle">regulated</text>
+          <path class="w" d="M366 236H386" marker-end="url(#ah)"/>
+          <rect class="bx" x="388" y="208" width="124" height="56" rx="8"/>
+          <text class="t" x="450" y="233.5" text-anchor="middle">5 V rail</text>
+          <text class="s" x="450" y="251.5" text-anchor="middle">regulated</text>
+        </svg>
+        <figcaption>The power path I built, from the pack to the regulated rails.</figcaption>
+      </figure>
+    </article>
+
+    <!-- 04 -->
+    <article class="project reveal" id="p4">
+      <div class="text">
+        <div class="num">04 / PCB DESIGN</div>
+        <h3>Femtoamp measurement board</h3>
+        <div class="meta">Chaaban Lab, UBC Okanagan · Research Assistant · July 2026 to now</div>
+        <p class="intro">A femtoamp is a millionth of a billionth of an amp. At that level the circuit board itself can leak more current than the signal you are trying to measure, so the layout matters as much as the schematic.</p>
+        <ul>
+          <li>Designed a 4-layer test PCB in Altium around the ADA4530-1, with a guard ring and guard plane protecting the input, followed by filter and gain stages.</li>
+          <li>Simulated the amplifier and filter stages in LTspice before layout.</li>
+          <li>Went through the datasheets pin by pin before ordering and caught a pinout error that would have made the board unusable.</li>
+        </ul>
+      </div>
+      <figure class="fig" style="margin:0">
+        <svg class="dia" viewBox="0 0 520 240" role="img" aria-label="Signal chain: a femtoamp input goes into the ADA4530-1 front end, which is surrounded by a guard ring and guard plane, then a filter stage, then a gain stage, then the output.">
+          <rect class="dash" x="84" y="58" width="180" height="124" rx="12"/>
+          <text class="s" x="174" y="46" text-anchor="middle" style="fill:var(--accent)">guard ring + guard plane</text>
+          <text class="s hot" x="8" y="108">fA input</text>
+          <path class="w hot" d="M8 120H118" marker-end="url(#ahh)"/>
+          <rect class="bx key" x="120" y="90" width="128" height="60" rx="8"/>
+          <text class="t" x="184" y="117.5" text-anchor="middle">ADA4530-1</text>
+          <text class="s" x="184" y="135.5" text-anchor="middle">front end</text>
+          <path class="w" d="M248 120H286" marker-end="url(#ah)"/>
+          <rect class="bx" x="288" y="90" width="84" height="60" rx="8"/>
+          <text class="t" x="330" y="117.5" text-anchor="middle">Filter</text>
+          <text class="s" x="330" y="135.5" text-anchor="middle">stage</text>
+          <path class="w" d="M372 120H394" marker-end="url(#ah)"/>
+          <rect class="bx" x="396" y="90" width="84" height="60" rx="8"/>
+          <text class="t" x="438" y="117.5" text-anchor="middle">Gain</text>
+          <text class="s" x="438" y="135.5" text-anchor="middle">stage</text>
+          <path class="w" d="M480 120H512" marker-end="url(#ah)"/>
+          <text class="s" x="512" y="108" text-anchor="end">out</text>
+          <text class="s" x="8" y="222">4-LAYER BOARD · ALTIUM · LTSPICE FIRST</text>
+        </svg>
+        <figcaption>Signal chain. The guard keeps board leakage away from the input.</figcaption>
+      </figure>
+    </article>
+
+    <!-- 05 -->
+    <article class="project reveal" id="p5">
+      <div class="text">
+        <div class="num">05 / SENSING AND SAFETY</div>
+        <h3>CNC force telemetry and e-stop</h3>
+        <div class="meta">UBC CMPE 246 capstone · Feb to Apr 2026 · team of 5</div>
+        <p class="intro">A system that measures cutting forces on a CNC machine in real time and stops the machine when something goes wrong.</p>
+        <ul>
+          <li>Half-bridge strain gauge into an instrumentation amp and an ADC.</li>
+          <li>Signal processing in three steps: a median filter, a dual EMA and a rate-of-change gate. It reacts fast to a real event and ignores noise.</li>
+          <li>Coordinated the 5-person team over 11 weeks.</li>
+        </ul>
+        <dl class="specs">
+          <div><dt>E-stop response</dt><dd>12.5 ms</dd></div>
+          <div><dt>False positives</dt><dd>0 in bench testing</dd></div>
+        </dl>
+      </div>
+      <figure class="fig" style="margin:0">
+        <svg class="dia" viewBox="0 0 520 284" role="img" aria-label="Signal path: strain gauge half-bridge, instrumentation amp, ADC, then a median filter, dual EMA and rate-of-change gate, ending in the emergency stop output. Total response 12.5 milliseconds.">
+          <rect class="bx" x="8" y="16" width="150" height="62" rx="8"/>
+          <text class="t" x="83" y="44.5" text-anchor="middle">Strain gauge</text>
+          <text class="s" x="83" y="62.5" text-anchor="middle">half-bridge</text>
+          <path class="w" d="M158 47H176" marker-end="url(#ah)"/>
+          <rect class="bx" x="178" y="16" width="170" height="62" rx="8"/>
+          <text class="t" x="263" y="44.5" text-anchor="middle">Instrumentation amp</text>
+          <text class="s" x="263" y="62.5" text-anchor="middle">analog front end</text>
+          <path class="w" d="M348 47H366" marker-end="url(#ah)"/>
+          <rect class="bx" x="368" y="16" width="144" height="62" rx="8"/>
+          <text class="t" x="440" y="53" text-anchor="middle">ADC</text>
+          <path class="w" d="M440 78V108H62V136" marker-end="url(#ah)"/>
+          <rect class="bx" x="8" y="138" width="108" height="62" rx="8"/>
+          <text class="t" x="62" y="166.5" text-anchor="middle">Median</text>
+          <text class="s" x="62" y="184.5" text-anchor="middle">filter</text>
+          <path class="w" d="M116 169H130" marker-end="url(#ah)"/>
+          <rect class="bx" x="132" y="138" width="108" height="62" rx="8"/>
+          <text class="t" x="186" y="166.5" text-anchor="middle">Dual EMA</text>
+          <text class="s" x="186" y="184.5" text-anchor="middle">smoothing</text>
+          <path class="w" d="M240 169H254" marker-end="url(#ah)"/>
+          <rect class="bx" x="256" y="138" width="138" height="62" rx="8"/>
+          <text class="t" x="325" y="166.5" text-anchor="middle">Rate-of-change</text>
+          <text class="s" x="325" y="184.5" text-anchor="middle">gate</text>
+          <path class="w hot" d="M394 169H410" marker-end="url(#ahh)"/>
+          <rect class="bx hot" x="412" y="138" width="100" height="62" rx="8"/>
+          <text class="t hot" x="462" y="175" text-anchor="middle">E-STOP</text>
+          <path class="w hot" d="M8 242H512M8 234V250M512 234V250"/>
+          <text class="s hot" x="260" y="268" text-anchor="middle">force event to stop: 12.5 ms</text>
+        </svg>
+      </figure>
+    </article>
+  </div>
+</section>
+
+<section id="builds">
+  <div class="wrap">
+    <div class="sec-head"><h2>Smaller builds</h2><div class="rule"></div><div class="tag">personal</div></div>
+    <div class="grid3">
+      <div class="mini reveal">
+        <h3>Python automation and reporting</h3>
+        <p>Scripts that run on a schedule without me. They collect and parse data with Playwright and REST APIs, score it and email me a report. Each one has health checks, retries and failure alerts, so I hear about it when one breaks.</p>
+        <p>I use the Claude API and Claude Code daily for test code, debugging and data analysis. Anything that touches hardware still gets checked on the bench.</p>
+        <div class="chips"><span class="chip">Python</span><span class="chip">Playwright</span><span class="chip">REST APIs</span><span class="chip">Claude API</span></div>
+      </div>
+      <div class="mini reveal">
+        <h3>ESP32 oscilloscope</h3>
+        <p>A single-channel scope built on the ESP32's ADC. It streams samples over serial for live plotting, has a PWM square wave output so it can test itself, and takes serial commands to change the timebase and voltage range.</p>
+        <div class="chips"><span class="chip">ESP32</span><span class="chip">C++</span><span class="chip">ADC</span><span class="chip">PWM</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head"><h2>Experience</h2><div class="rule"></div><div class="tag">2025 to now</div></div>
+    <div class="xp">
+      <div class="row reveal">
+        <div class="when">Sept 2025 to now</div>
+        <div>
+          <h3>HEAT Robotics, UBC Okanagan</h3>
+          <div class="role">Lead Electrical Director, RoboStrike · Interim Electrical Lead, EMBR</div>
+          <p class="d">Electrical lead across two robots. Architecture, bring-up, bench testing, a $4.4k to $6.2k electrical BOM, and training new members.</p>
+        </div>
+      </div>
+      <div class="row reveal">
+        <div class="when">July 2026 to now</div>
+        <div>
+          <h3>Chaaban Lab, UBC Okanagan</h3>
+          <div class="role">Research Assistant, part-time</div>
+          <p class="d">PCB design and simulation for femtoamp current measurement.</p>
+        </div>
+      </div>
+      <div class="row reveal">
+        <div class="when">Sept 2026 to Apr 2027</div>
+        <div>
+          <h3>Smith + Andersen</h3>
+          <div class="role">Junior Designer, Electrical (co-op)</div>
+          <p class="d">Power and lighting layouts, load calculations and panel schedules to the Canadian Electrical Code in Revit and AutoCAD, reviewed by a P.Eng.</p>
+        </div>
+      </div>
+      <div class="row reveal">
+        <div class="when">Expected April 2029</div>
+        <div>
+          <h3>University of British Columbia, Okanagan</h3>
+          <div class="role">B.A.Sc. Electrical Engineering</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="toolbox">
+  <div class="wrap">
+    <div class="sec-head"><h2>Toolbox</h2><div class="rule"></div><div class="tag">what I actually use</div></div>
+    <div class="tools">
+      <div class="reveal">
+        <h3>Test and hardware</h3>
+        <div class="chips"><span class="chip">Bench testing</span><span class="chip">Electrical bring-up</span><span class="chip">Troubleshooting</span><span class="chip">Data logging</span><span class="chip">Oscilloscope</span><span class="chip">Multimeter</span><span class="chip">Wiring harnesses</span><span class="chip">SMT and through-hole soldering</span></div>
+      </div>
+      <div class="reveal">
+        <h3>Electromechanical</h3>
+        <div class="chips"><span class="chip">BLDC motor control</span><span class="chip">ESCs</span><span class="chip">Servo motors</span><span class="chip">Encoders</span><span class="chip">Li-ion battery packs</span><span class="chip">Power distribution and fusing</span></div>
+      </div>
+      <div class="reveal">
+        <h3>Embedded and software</h3>
+        <div class="chips"><span class="chip">Python</span><span class="chip">C++ (embedded)</span><span class="chip">STM32</span><span class="chip">ESP32</span><span class="chip">PWM</span><span class="chip">I²C</span><span class="chip">SPI</span><span class="chip">UART</span><span class="chip">CAN bus design</span><span class="chip">Git (basic)</span></div>
+      </div>
+      <div class="reveal">
+        <h3>Design tools</h3>
+        <div class="chips"><span class="chip">Altium</span><span class="chip">LTspice</span><span class="chip">SolidWorks</span><span class="chip">Revit</span><span class="chip">AutoCAD</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="contact" id="contact">
+  <div class="wrap">
+    <h2>Got a robot that needs testing?</h2>
+    <p>I'm looking for robotics, test and hardware internships. Email is the fastest way to reach me.</p>
+    <div class="cta">
+      <a class="btn primary" href="mailto:hdejon01@student.ubc.ca">hdejon01@student.ubc.ca</a>
+      <a class="btn" href="https://www.linkedin.com/in/hugo-de-jongh" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="foot"><span>Hugo De Jongh · Kelowna, BC</span><span>Last updated November 2026</span></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme');
+  if (btn) btn.addEventListener('click', function () {
+    var cur = root.getAttribute('data-theme');
+    if (!cur) cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(function (e) { io.observe(e); });
+})();
+</script>
+</body>
+</html>
